@@ -69,8 +69,14 @@ check = (request, responseBASE) => {
                                     responseBASE.end("FAILED SAVE TAMIL");
                                 } else {
                                     console.log("Data saved successfully. TAMIL");
+									
+									let tranOptions={ 'from': 'ta',
+												      'to': 'en',
+												      'format': 'text',
+												      'model':'base'
+												    };
 
-                                    googleTranslate.translate(finaltext, 'ta', 'en', function (err, translation) {
+                                    googleTranslate.translate(finaltext, tranOptions, function (err, translation) {
                                      //   console.log("translation ", translation.translatedText);
 
                                         firebase.database().ref().child('posts').child(postIdEN).set(translation.translatedText, function (error) {
