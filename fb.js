@@ -69,17 +69,45 @@ check = (request, responseBASE) => {
                                     responseBASE.end("FAILED SAVE TAMIL");
                                 } else {
                                     console.log("Data saved successfully. TAMIL");
-									
-									let tranOptions={ 'from': 'ta',
-												      'to': 'en',
-												      'format': 'text',
-												      'model':'base'
-												    };
 
-                                    googleTranslate.translate(finaltext, tranOptions, function (err, translation) {
-                                     //   console.log("translation ", translation.translatedText);
+                                    let tranOptions = {
+                                        'from': 'ta',
+                                        'to': 'en',
+                                        'format': 'text',
+                                        'model': 'base'
+                                    };
 
-                                        firebase.database().ref().child('posts').child(postIdEN).set(translation.translatedText, function (error) {
+                                    ////////////////
+                                    // TRANSLATE POST
+
+                                    axios.post("https://translation.googleapis.com/language/translate/v2?key=" + api,
+
+                                        {
+                                            "format": "text",
+                                            "q": finaltext,
+                                            "source": "ta",
+                                            "target": "en",
+                                            "model": "base"
+                                        }
+
+                                    ).then(function (response) {
+                                        //    console.log(response.data);
+
+                                       let  translateResponse = response.data.data.translations[0].translatedText;
+                                     
+                                                console.log(`
+                                                
+                                                =============== TRANSLATED START
+                                                
+                                                `);
+                                                console.log(translateResponse);
+                                                console.log(`
+                                                
+                                                =============== TRANSLATED END
+                                                
+                                                `);
+
+                                        firebase.database().ref().child('posts').child(postIdEN).set(translateResponse, function (error) {
                                             if (error) {
                                                 console.log("Data could not be saved. TRANST ENGLISH" + error);
                                                 responseBASE.end("FAILED SAVE TRANST ENGLISH");
@@ -92,7 +120,7 @@ check = (request, responseBASE) => {
                                                     {
                                                         "document":
                                                         {
-                                                            "content": translation.translatedText,
+                                                            "content": translateResponse,
                                                             "language": "en",
                                                             "type": "PLAIN_TEXT"
                                                         },
@@ -129,8 +157,14 @@ check = (request, responseBASE) => {
                                                 //   responseBASE.end(finaltext);
                                             }
                                         });
-                                        // =>  Mi nombre es Brandon
+
+
+                                    }).catch(function (error) {
+                                        console.log(error);
+                                        responseBASE.end("FAILED TRANSLATE API");
                                     });
+                                    ////////////////
+
 
 
 
@@ -166,7 +200,7 @@ check = (request, responseBASE) => {
 
         }
         else {
-            console.log("EXISTS "+postIdNT);
+            console.log("EXISTS " + postIdNT);
             responseBASE.end(snap.val());
             //   console.log(snap.val());
         }
