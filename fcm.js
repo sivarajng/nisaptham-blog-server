@@ -118,18 +118,29 @@ class FCMWorker {
     pushNotification(title, body) {
 
         let FCMPayload = {
-            "to": "/topics/nisaptham-post",
-            "data": {
-                "type": "MEASURE_CHANGE",
-                "custom_notification": {
-                    "title": title,
-                    "body": body,
-                    "color": "#3391ed",
-                    "priority": "high",
-                    "show_in_foreground": true
-                }
-            }
-        }
+                            "to": "/topics/nisaptham-post",
+                            "data": {
+                                "type": "MEASURE_CHANGE",
+                                "custom_notification": {
+                                    "title": title,
+                                    "body": body,
+                                    "color": "#3391ed",
+                                    "priority": "high",
+                                    "show_in_foreground": true,
+                                    "sound": "default",
+                                    "click_action": "fcm.ACTION.HELLO",
+                                    "vibrate": 300,
+                                    "lights": true,
+                                    "uid": "uid",
+                                    "icon": "ic_launcher",
+                                    "large_icon": "ic_launcher"
+                                }
+                            },
+                            "priority": "high",
+                            "click_action": "fcm.ACTION.HELLO",
+                            "icon": "ic_launcher",
+                            "large_icon": "ic_launcher"
+                        }   
 
         instance.post('/fcm/send', FCMPayload).then((response) => {
             console.log("FCM success response : ", response.data)
